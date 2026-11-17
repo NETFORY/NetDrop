@@ -460,12 +460,7 @@ pub(crate) async fn mr_delete(login: &str, pass: &str, path: &str) -> Result<(),
 
 // ---------- OAuth (те же приложения, что и в NETFORY) ----------
 
-//const YA_CLIENT_ID: &str = "";
-//const YA_CLIENT_SECRET: &str = "";
 const YA_OAUTH_WINDOW: &str = "yandex-oauth";
-
-//const G_CLIENT_ID: &str = "";
-//const G_CLIENT_SECRET: &str = "";
 const G_SCOPE: &str = "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.file";
 
 /// PKCE (RFC 7636): (code_verifier, S256 code_challenge).
