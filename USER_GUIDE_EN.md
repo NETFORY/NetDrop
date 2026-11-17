@@ -16,8 +16,8 @@ Imagine you run an invisible cable between two devices. Everything you send trav
 Runs on **Windows, Linux, macOS, and Android**. Under the hood: Rust, the QUIC protocol, and the iroh P2P network - the same technologies powering the modern "direct" internet.
 
 **What the transfer looks like from the user's perspective:**
-1. The sender picks a file > a short **ticket** and a QR code appear.
-2. The receiver scans the QR (or pastes the ticket) > sees what's being offered and taps "Accept."
+1. The sender picks a file -> a short **ticket** and a QR code appear.
+2. The receiver scans the QR (or pastes the ticket) -> sees what's being offered and taps "Accept."
 3. The file flies straight through. Done.
 
 For your own devices you can skip steps 1–2 entirely - see "Trusted Devices."
@@ -28,7 +28,7 @@ For your own devices you can skip steps 1–2 entirely - see "Trusted Devices."
 
 | The usual pain | How NetDrop fixes it |
 |---|---|
-| "Send me the photos" > half an hour fiddling with a cable that's always the wrong one | QR code > files are already on your computer |
+| "Send me the photos" -> half an hour fiddling with a cable that's always the wrong one | QR code -> files are already on your computer |
 | A messenger crushes video into a 480p mess | Files transfer **byte-for-byte**, no re-encoding |
 | "File is over 2 GB, upload it to the cloud" | No size limit - go ahead and send a 200 GB disk image |
 | Cloud = your files on someone else's computer | Files **never leave** your devices |
@@ -68,7 +68,7 @@ Centralized services are like mail with a sorting center: your package first goe
 ## 4. All Features and Use Cases
 
 ### 🎫 Tickets - Transfer to Anyone
-Pick files > instantly receive a ticket `nd1...` and a QR code. A ticket is an "address + key" in a single string: forward it any way you like (show the QR, dictate it, drop it in a chat). A ticket is single-use - once the transfer is done it's as useless as a used movie stub.
+Pick files -> instantly receive a ticket `nd1...` and a QR code. A ticket is an "address + key" in a single string: forward it any way you like (show the QR, dictate it, drop it in a chat). A ticket is single-use - once the transfer is done it's as useless as a used movie stub.
 
 *Example: your neighbor asks for an 8 GB wedding video. Show them the QR on your screen - within a few minutes the video is on their device, in the original quality.*
 
@@ -80,7 +80,7 @@ Enable it in settings and a single ticket can be used by several people at once;
 ### 🤝 Trusted Devices - Magic for Your Own Gear
 Pair your phone and computer once (QR from settings), enable "Always Accept" on the PC, and from then on:
 
-*You're walking around town, snap something important > "Share" > NetDrop > "⇢ Desktop-Home" - your home PC already accepted the photo and saved it to disk. You haven't even crossed the street yet.*
+*You're walking around town, snap something important -> "Share" -> NetDrop -> "--> Desktop-Home" - your home PC already accepted the photo and saved it to disk. You haven't even crossed the street yet.*
 
 - Works **from any network**: mobile data, a café, another country.
 - Symmetric: both the PC and the phone can listen.
@@ -130,10 +130,10 @@ And yes - it just feels good: watching a 20 GB file fly directly at the speed of
 
 ## 6. Ideas for Future Development
 
-- **One-tap file open** - receive on phone > tap > opens in the appropriate app.
+- **One-tap file open** - receive on phone -> tap -> opens in the appropriate app.
 - **Download counter** on multi-recipients: how many people have grabbed the file and who's downloading right now.
 - **Text notes and clipboard sync** - pass a link or password between devices as easily as a file.
-- **Sync folders** between trusted devices: drop a file into a folder on the PC > it appears on the phone.
+- **Sync folders** between trusted devices: drop a file into a folder on the PC -> it appears on the phone.
 - **iOS version** - Tauri already supports it; it's just a matter of building it.
 - **Group "rooms"**: several family devices in one trusted circle.
 - **Auto-clear history and "vanishing" transfers** for the paranoid (we love you).
