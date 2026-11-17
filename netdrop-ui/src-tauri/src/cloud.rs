@@ -1,12 +1,12 @@
 // ============================================================
-//  netdrop-ui // cloud.rs — Crypto Cloud: обмен файлами через
+//  netdrop-ui // cloud.rs - Crypto Cloud: обмен файлами через
 //  облачные диски (Yandex Disk / Google Drive / Mail.ru WebDAV),
 //  когда прямая P2P-связь недоступна.
 //
 //  Схема: на диске создаётся папка .netdrop/<tid>/ с чанками
-//  c0000, c0001… (≤100 МиБ каждый), каждый чанк E2E-шифруется
+//  c0000, c0001... (≤100 МиБ каждый), каждый чанк E2E-шифруется
 //  ChaCha20-Poly1305 (nonce = номер чанка, AAD = tid). Ключ живёт
-//  ТОЛЬКО в тикете "ndc1…" — в облаке лежит мусор. Папка
+//  ТОЛЬКО в тикете "ndc1..." - в облаке лежит мусор. Папка
 //  публикуется (Yandex public_url / Google anyone-reader), поэтому
 //  получателю аккаунт облака не нужен. Mail.ru WebDAV публичных
 //  ссылок не умеет: приём возможен только с тем же аккаунтом.
@@ -78,7 +78,7 @@ pub(crate) async fn api_err(prefix: &str, r: reqwest::Response) -> String {
     format!("{prefix} {s}: {}", b.chars().take(200).collect::<String>())
 }
 
-// ---------- Тикет ndc1… ----------
+// ---------- Тикет ndc1... ----------
 
 #[derive(Serialize, Deserialize, Clone)]
 struct CloudTicket {
@@ -115,7 +115,7 @@ fn encode_ticket(t: &CloudTicket) -> String {
 fn decode_ticket(s: &str) -> Result<CloudTicket, String> {
     let s = s.trim();
     let s = s.strip_prefix("netdrop://").unwrap_or(s);
-    let body = s.strip_prefix(TICKET_PREFIX).ok_or("not a cloud ticket (ndc1… expected)")?;
+    let body = s.strip_prefix(TICKET_PREFIX).ok_or("not a cloud ticket (ndc1... expected)")?;
     let raw = B64.decode(body.trim()).map_err(|_| "ticket corrupted (base64)")?;
     serde_json::from_slice(&raw).map_err(|_| "ticket corrupted (format)".to_string())
 }
@@ -137,7 +137,7 @@ pub(crate) fn seal_chunk(key: &[u8; 32], tid: &str, idx: u64, plain: &[u8]) -> R
 pub(crate) fn open_chunk(key: &[u8; 32], tid: &str, idx: u64, ct: &[u8]) -> Result<Vec<u8>, String> {
     ChaCha20Poly1305::new(Key::from_slice(key))
         .decrypt(Nonce::from_slice(&chunk_nonce(idx)), Payload { msg: ct, aad: tid.as_bytes() })
-        .map_err(|_| "chunk decryption failed — wrong key or corrupted data".to_string())
+        .map_err(|_| "chunk decryption failed - wrong key or corrupted data".to_string())
 }
 
 // ---------- Yandex Disk (REST) ----------
@@ -156,7 +156,7 @@ pub(crate) async fn ya_mkdir(token: &str, path: &str) -> Result<(), String> {
         .send()
         .await
         .map_err(|e| e.to_string())?;
-    // 409 — папка уже существует
+    // 409 - папка уже существует
     if r.status().is_success() || r.status().as_u16() == 409 {
         Ok(())
     } else {
@@ -210,7 +210,7 @@ pub(crate) async fn ya_publish(token: &str, path: &str) -> Result<String, String
     j["public_url"].as_str().map(String::from).ok_or_else(|| "Yandex: no public_url".to_string())
 }
 
-/// Скачивание из публичной папки — БЕЗ авторизации (аккаунт не нужен).
+/// Скачивание из публичной папки - БЕЗ авторизации (аккаунт не нужен).
 pub(crate) async fn ya_public_download(public_key: &str, path: &str) -> Result<bytes::Bytes, String> {
     let r = http()
         .get(format!("{YA_API}/public/resources/download"))
@@ -317,7 +317,7 @@ pub(crate) async fn g_upload(token: &str, parent: &str, name: &str, data: bytes:
     j["id"].as_str().map(String::from).ok_or_else(|| "Google: no file id".to_string())
 }
 
-/// Обновление содержимого файла по id (id стабилен — нужен для index.json почты).
+/// Обновление содержимого файла по id (id стабилен - нужен для index.json почты).
 pub(crate) async fn g_update_media(token: &str, file_id: &str, data: bytes::Bytes) -> Result<(), String> {
     let r = http()
         .patch(format!("https://www.googleapis.com/upload/drive/v3/files/{file_id}"))
@@ -408,7 +408,7 @@ pub(crate) async fn mr_mkcol(login: &str, pass: &str, path: &str) -> Result<(), 
         .send()
         .await
         .map_err(|e| e.to_string())?;
-    // 405 — коллекция уже существует
+    // 405 - коллекция уже существует
     if r.status().is_success() || r.status().as_u16() == 405 {
         Ok(())
     } else {
@@ -460,12 +460,12 @@ pub(crate) async fn mr_delete(login: &str, pass: &str, path: &str) -> Result<(),
 
 // ---------- OAuth (те же приложения, что и в NETFORY) ----------
 
-const YA_CLIENT_ID: &str = "a21ba4730fb142a0bed238108b19db8e";
-const YA_CLIENT_SECRET: &str = "d034bd943f914872972ead76ecd1a5a1";
+const YA_CLIENT_ID: &str = "";
+const YA_CLIENT_SECRET: &str = "";
 const YA_OAUTH_WINDOW: &str = "yandex-oauth";
 
-const G_CLIENT_ID: &str = "784003886336-m43ovr95oidf1sg0cbu1cpbulobbirb6.apps.googleusercontent.com";
-const G_CLIENT_SECRET: &str = "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";
+const G_CLIENT_ID: &str = "";
+const G_CLIENT_SECRET: &str = "";
 const G_SCOPE: &str = "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.file";
 
 /// PKCE (RFC 7636): (code_verifier, S256 code_challenge).
@@ -513,9 +513,9 @@ fn open_browser(app: &AppHandle, url: &str) {
     let _ = app.opener().open_url(url, None::<&str>);
 }
 
-/// Android: второе webview-окно не поддерживается — OAuth идёт через
-/// системный браузер. start → {url, verifier}; пользователь копирует
-/// код подтверждения со страницы Яндекса → exchange(code, verifier).
+/// Android: второе webview-окно не поддерживается - OAuth идёт через
+/// системный браузер. start -> {url, verifier}; пользователь копирует
+/// код подтверждения со страницы Яндекса -> exchange(code, verifier).
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OauthStart {
@@ -584,7 +584,7 @@ pub(crate) async fn cloud_yandex_oauth(app: AppHandle) -> Result<OauthOut, Strin
     let tx = std::sync::Mutex::new(Some(tx));
 
     let win = WebviewWindowBuilder::new(&app, YA_OAUTH_WINDOW, WebviewUrl::External(auth_url))
-        .title("Sign in with Yandex — netdrop")
+        .title("Sign in with Yandex - netdrop")
         .inner_size(480.0, 720.0)
         .on_navigation(move |url| {
             if url.host_str() == Some("oauth.yandex.ru") && url.path() == "/verification_code" {
@@ -610,7 +610,7 @@ pub(crate) async fn cloud_yandex_oauth(app: AppHandle) -> Result<OauthOut, Strin
         Ok(Err(_)) => return Err("authorization cancelled (window closed)".into()),
         Err(_) => {
             let _ = win.close();
-            return Err("authorization timeout (5 min) — try again".into());
+            return Err("authorization timeout (5 min) - try again".into());
         }
     };
     let _ = win.close();
@@ -967,7 +967,7 @@ async fn cloud_send_inner(
         let want = std::cmp::min(csz, size - i * csz) as usize;
         let mut buf = vec![0u8; want];
         f.read_exact(&mut buf).await.map_err(|e| e.to_string())?;
-        // шифрование 100 МиБ — CPU-bound → вне async-потока
+        // шифрование 100 МиБ - CPU-bound -> вне async-потока
         let (k, t) = (*key, tid.to_string());
         let enc = tauri::async_runtime::spawn_blocking(move || seal_chunk(&k, &t, i, &buf))
             .await
@@ -1004,7 +1004,7 @@ async fn cloud_send_inner(
     }
 }
 
-/// Загрузка файлов в облако → тикет ndc1… (ссылка + E2E-ключ внутри).
+/// Загрузка файлов в облако -> тикет ndc1... (ссылка + E2E-ключ внутри).
 #[tauri::command]
 pub(crate) async fn cloud_send(
     app: AppHandle,
@@ -1029,7 +1029,7 @@ pub(crate) async fn cloud_send(
         && tokio::fs::metadata(&paths[0]).await.map(|m| m.is_file()).unwrap_or(false);
     let name = crate::bundle_name(&paths);
 
-    // несколько файлов/папка → tar во временный файл
+    // несколько файлов/папка -> tar во временный файл
     let (src_path, tar_mode, tmp) = if single_file {
         (paths[0].clone(), false, None)
     } else {
@@ -1174,7 +1174,7 @@ pub(crate) async fn download_encrypted(
     let short: String = tid.chars().take(8).collect();
     let part = out_dir.join(format!("{safe}.{short}.ndcloud.part"));
     let sidecar = out_dir.join(format!("{safe}.{short}.ndcloud.part.json"));
-    // докачка: сайдкар с тем же tid → продолжаем со следующего чанка
+    // докачка: сайдкар с тем же tid -> продолжаем со следующего чанка
     let mut start: u64 = 0;
     if part.exists() {
         if let Ok(s) = std::fs::read_to_string(&sidecar) {
@@ -1189,7 +1189,7 @@ pub(crate) async fn download_encrypted(
     if start > 0 {
         let plen = tokio::fs::metadata(&part).await.map(|m| m.len()).unwrap_or(0);
         if plen < expected {
-            start = 0; // файл короче ожидаемого — качаем заново
+            start = 0; // файл короче ожидаемого - качаем заново
         }
     }
     let mut f;
@@ -1245,7 +1245,7 @@ pub(crate) async fn download_encrypted(
     }
 }
 
-/// Скачивание по облачному тикету ndc1… (Yandex/Google — без аккаунта).
+/// Скачивание по облачному тикету ndc1... (Yandex/Google - без аккаунта).
 #[tauri::command]
 pub(crate) async fn cloud_recv(
     app: AppHandle,
@@ -1361,9 +1361,9 @@ mod tests {
         let key = [9u8; 32];
         let ct = seal_chunk(&key, "tid01", 3, b"hello cloud").expect("seal");
         assert_eq!(open_chunk(&key, "tid01", 3, &ct).expect("open"), b"hello cloud".to_vec());
-        // не тот индекс (nonce) → отказ
+        // не тот индекс (nonce) -> отказ
         assert!(open_chunk(&key, "tid01", 4, &ct).is_err());
-        // не тот tid (AAD) → отказ
+        // не тот tid (AAD) -> отказ
         assert!(open_chunk(&key, "tid02", 3, &ct).is_err());
     }
 
